@@ -5,10 +5,10 @@ import { User } from '@/modules/users/entities/user.entity';
 
 @Injectable()
 export class DatabaseConfigService implements TypeOrmOptionsFactory {
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService) { }
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
-    const databaseType = this.configService.get<string>('DATABASE_TYPE', 'sqlite');
+    const databaseType = this.configService.get<string>('DATABASE_TYPE', 'postgres');
 
     if (databaseType === 'sqlite') {
       return {
@@ -22,19 +22,20 @@ export class DatabaseConfigService implements TypeOrmOptionsFactory {
       };
     }
 
-    // MySQL/MariaDB configuration (for production)
+    // ✅ PostgreSQL configuration
     return {
-      type: 'mysql',
-      host: this.configService.get<string>('DATABASE_HOST'),
-      port: this.configService.get<number>('DATABASE_PORT'),
+      type: 'postgres',
+      host: this.configService.get<string>('DATABASE_HOST', 'localhost'),
+      port: this.configService.get<number>('DATABASE_PORT', 5432),
       username: this.configService.get<string>('DATABASE_USERNAME'),
       password: this.configService.get<string>('DATABASE_PASSWORD'),
       database: this.configService.get<string>('DATABASE_NAME'),
       entities: [User],
       migrations: ['src/database/migrations/*.ts'],
-      synchronize: false,
+      synchronize: false, // Use migrations in production
       logging: this.configService.get<string>('NODE_ENV') === 'development',
       migrationsRun: false,
+      autoLoadEntities: true,
     };
   }
 }

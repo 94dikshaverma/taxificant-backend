@@ -1,4 +1,4 @@
-import { User } from '@/modules/users/entities/user.entity';
+import { User, UserRole } from '@/modules/users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 
 export const userSeedData = async (): Promise<Partial<User>[]> => {
@@ -10,7 +10,7 @@ export const userSeedData = async (): Promise<Partial<User>[]> => {
       password: hashedPassword,
       firstName: 'Admin',
       lastName: 'User',
-      role: 'admin',
+      role: UserRole.ADMIN,
       isActive: true,
     },
     {
@@ -18,7 +18,7 @@ export const userSeedData = async (): Promise<Partial<User>[]> => {
       password: hashedPassword,
       firstName: 'Regular',
       lastName: 'User',
-      role: 'user',
+      role: UserRole.USER,
       isActive: true,
     },
     {
@@ -26,7 +26,7 @@ export const userSeedData = async (): Promise<Partial<User>[]> => {
       password: hashedPassword,
       firstName: 'Test',
       lastName: 'User',
-      role: 'user',
+      role: UserRole.USER,
       isActive: true,
     },
   ];

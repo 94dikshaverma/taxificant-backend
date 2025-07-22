@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table, Index } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
 
 export class CreateUsersTable1641234567890 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -8,10 +8,9 @@ export class CreateUsersTable1641234567890 implements MigrationInterface {
         columns: [
           {
             name: 'id',
-            type: 'varchar',
+            type: 'uuid',
             isPrimary: true,
-            generationStrategy: 'uuid',
-            default: 'LOWER(HEX(RANDOMBLOB(4))) || "-" || LOWER(HEX(RANDOMBLOB(2))) || "-" || LOWER(HEX(RANDOMBLOB(2))) || "-" || LOWER(HEX(RANDOMBLOB(2))) || "-" || LOWER(HEX(RANDOMBLOB(6)))',
+            default: 'uuid_generate_v4()',
           },
           {
             name: 'email',
@@ -38,7 +37,7 @@ export class CreateUsersTable1641234567890 implements MigrationInterface {
             name: 'role',
             type: 'varchar',
             length: '50',
-            default: "'user'",
+            default: `'user'`,
           },
           {
             name: 'isActive',
@@ -47,12 +46,12 @@ export class CreateUsersTable1641234567890 implements MigrationInterface {
           },
           {
             name: 'createdAt',
-            type: 'datetime',
+            type: 'timestamp',
             default: 'CURRENT_TIMESTAMP',
           },
           {
             name: 'updatedAt',
-            type: 'datetime',
+            type: 'timestamp',
             default: 'CURRENT_TIMESTAMP',
           },
         ],
@@ -60,10 +59,13 @@ export class CreateUsersTable1641234567890 implements MigrationInterface {
       true,
     );
 
-    // Create index on email
+    // ✅ Use TableIndex instead of Index
     await queryRunner.createIndex(
       'users',
-      new Index('IDX_USER_EMAIL', ['email']),
+      new TableIndex({
+        name: 'IDX_USER_EMAIL',
+        columnNames: ['email'],
+      }),
     );
   }
 
